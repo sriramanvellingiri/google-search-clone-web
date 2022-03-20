@@ -19,22 +19,40 @@ function SearchResults() {
 
   const [query, setQuery] = useState(q || '')
 
+  const [isResultShown, setResultShown] = useState(false);
+
   const { response: searchResults = [] } = useFetch(
     `${API_URL}/search?searchTerm=${query}`
   )
 
+  const handleSearch = (event) => {
+    if (event.key === 'Enter' || event.type === 'click') {
+       setResultShown(true);
+    } else {
+      setResultShown(false)
+    }
+  }
+
+  console.log('dd', isResultShown)
   return (
     <>
       <SearchForm
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        onClear={() => setQuery('')}
+        onClear={(e) => {
+          event.preventDefault();
+          setQuery('');
+        }}
+        //onKeyDown={handleSearch}
+        //onSearch={handleSearch}
       />
-      {searchResults.length ? (
-        <ResultList query={query} data={searchResults} />
-      ) : (
-        <NoResultFound searchText={query} />
-      )}
+
+      { searchResults.length ? (
+       <ResultList query={query} data={searchResults} />
+     ) : (
+       <NoResultFound searchText={q} />
+     )}
+
     </>
   )
 }
